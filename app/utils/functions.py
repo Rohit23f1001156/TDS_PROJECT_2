@@ -1251,23 +1251,54 @@ async def analyze_image_brightness(file_path: str, threshold: float = 0.937) -> 
         return f"Error analyzing image brightness: {str(e)}"
 
 
+import subprocess
+
+
 async def deploy_vercel_app(data_file: str, app_name: Optional[str] = None) -> str:
     """
-    Generate code for a Vercel app deployment.
+    Deploy the FastAPI app to Vercel.
 
     Args:
-        data_file: Path to the data file
+        data_file: Path to the data file (not used in deployment)
         app_name: Optional name for the app
 
     Returns:
-        Deployment instructions and code
+        Deployment output from Vercel CLI
     """
     try:
-        # This is a placeholder - in reality, this would generate the code needed
-        # for a Vercel deployment
-        return f"Instructions for deploying app with data from {data_file}"
+        # Run Vercel deployment command
+        deploy_cmd = ["vercel", "--prod"]
+        if app_name:
+            deploy_cmd.extend(["--name", app_name])
+
+        result = subprocess.run(deploy_cmd, capture_output=True, text=True)
+
+        if result.returncode == 0:
+            return f"Vercel Deployment Successful: {result.stdout}"
+        else:
+            return f"Vercel Deployment Failed: {result.stderr}"
+
     except Exception as e:
-        return f"Error generating Vercel deployment: {str(e)}"
+        return f"Error deploying to Vercel: {str(e)}"
+
+    
+# async def deploy_vercel_app(data_file: str, app_name: Optional[str] = None) -> str:
+#     """
+#     Generate code for a Vercel app deployment.
+#
+#     Args:
+#         data_file: Path to the data file
+#         app_name: Optional name for the app
+#
+#     Returns:
+#         Deployment instructions and code
+#     """
+#     try:
+#         # This is a placeholder - in reality, this would generate the code needed
+#         # for a Vercel deployment
+#         return f"Instructions for deploying app with data from {data_file}"
+#     except Exception as e:
+#         return f"Error generating Vercel deployment: {str(e)}"
 
 
 async def create_github_action(email: str, repository: Optional[str] = None) -> str:
